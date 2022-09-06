@@ -35,6 +35,8 @@ import { fetchedState } from '../../constants';
 import { sortTraces } from '../../model/search';
 import { stripEmbeddedState } from '../../utils/embedded-url';
 import FileLoader from './FileLoader';
+import ChangePageButton from './ChangePageButton';
+
 
 import './index.css';
 import JaegerLogo from '../../img/jaeger-logo.svg';
@@ -43,6 +45,11 @@ const TabPane = Tabs.TabPane;
 
 // export for tests
 export class SearchTracePageImpl extends Component {
+  constructor(){
+    super();
+    this.state = {currentPage: 1};
+  }
+
   componentDidMount() {
     const {
       diffCohort,
@@ -94,9 +101,29 @@ export class SearchTracePageImpl extends Component {
       loadJsonTraces,
       urlQueryParams,
     } = this.props;
+
+    const totalPage = traceResults.length? Math.ceil(traceResults.length / 100): 1; 
+    const currentPage = this.state.currentPage? this.state.currentPage: 0;
     const hasTraceResults = traceResults && traceResults.length > 0;
     const showErrors = errors && !loadingTraces;
     const showLogo = isHomepage && !hasTraceResults && !loadingTraces && !errors;
+
+    const changePage = (selected) => {
+      console.log(selected);
+      if (selected !== this.state.currentPage){
+        if (selected <= 1){
+          this.state.currentPage = 1;
+        }
+        else if (selected >= totalPage){
+          this.state.currentPage = totalPage;
+        }
+        else if (selected > 1 && selected < totalPage) {
+          this.state.currentPage = selected;
+        }
+        this.forceUpdate();
+      }
+    }
+
     return (
       <Row className="SearchTracePage--row">
         {!embedded && (
@@ -115,6 +142,10 @@ export class SearchTracePageImpl extends Component {
                 </TabPane>
               </Tabs>
             </div>
+            <ChangePageButton 
+            totalPage={totalPage} 
+            currentPage={currentPage} 
+            changePage={changePage}/>
           </Col>
         )}
         <Col span={!embedded ? 18 : 24} className="SearchTracePage--column">
@@ -141,6 +172,7 @@ export class SearchTracePageImpl extends Component {
               skipMessage={isHomepage}
               spanLinks={urlQueryParams && urlQueryParams.spanLinks}
               traces={traceResults}
+              page={currentPage}
             />
           )}
           {showLogo && (

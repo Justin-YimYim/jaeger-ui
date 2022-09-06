@@ -59,6 +59,7 @@ type SearchResultsProps = {
   skipMessage?: boolean,
   spanLinks?: Record<string, string> | undefined | null,
   traces: TraceSummary[],
+  page: number
 };
 
 const Option = Select.Option;
@@ -127,8 +128,11 @@ export class UnconnectedSearchResults extends React.PureComponent<SearchResultsP
       skipMessage,
       spanLinks,
       traces,
+      page
     } = this.props;
 
+    console.log("this is page:", page);
+    let rank = 0;
     const traceResultsView = queryString.parse(location.search).view !== 'ddg';
 
     const diffSelection = !disableComparisons && (
@@ -205,6 +209,7 @@ export class UnconnectedSearchResults extends React.PureComponent<SearchResultsP
         {traceResultsView && (
           <ul className="ub-list-reset">
             {traces.map(trace => (
+              (page - 1) * 100 < ++rank && rank <= page * 100 ?
               <li className="ub-my3" key={trace.traceID}>
                 <ResultItem
                   durationPercent={getPercentageOfDuration(trace.duration, maxTraceDuration)}
@@ -218,7 +223,7 @@ export class UnconnectedSearchResults extends React.PureComponent<SearchResultsP
                   trace={trace}
                   disableComparision={disableComparisons}
                 />
-              </li>
+              </li> : null
             ))}
           </ul>
         )}
