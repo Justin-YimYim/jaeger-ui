@@ -131,7 +131,6 @@ export class UnconnectedSearchResults extends React.PureComponent<SearchResultsP
       page
     } = this.props;
 
-    console.log("this is page:", page);
     let rank = 0;
     const traceResultsView = queryString.parse(location.search).view !== 'ddg';
 

@@ -35,7 +35,7 @@ import { fetchedState } from '../../constants';
 import { sortTraces } from '../../model/search';
 import { stripEmbeddedState } from '../../utils/embedded-url';
 import FileLoader from './FileLoader';
-import ChangePageButton from './ChangePageButton';
+import ChangePage from './ChangePage';
 
 
 import './index.css';
@@ -108,8 +108,7 @@ export class SearchTracePageImpl extends Component {
     const showErrors = errors && !loadingTraces;
     const showLogo = isHomepage && !hasTraceResults && !loadingTraces && !errors;
 
-    const changePage = (selected) => {
-      console.log(selected);
+    const changePage = selected => {
       if (selected !== this.state.currentPage){
         if (selected <= 1){
           this.state.currentPage = 1;
@@ -142,7 +141,7 @@ export class SearchTracePageImpl extends Component {
                 </TabPane>
               </Tabs>
             </div>
-            <ChangePageButton 
+            <ChangePage 
             totalPage={totalPage} 
             currentPage={currentPage} 
             changePage={changePage}/>
